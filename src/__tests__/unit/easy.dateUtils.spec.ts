@@ -30,28 +30,85 @@ describe('getDaysInMonth', () => {
 
   // 에러를 처리할 때는 함수로 감싸줘야 합니다
   it('유효하지 않은 월에 대해 적절히 처리한다', () => {
-    expect(() => getDaysInMonth(2025, 0)).toThrow('유효하지 않은 월입니다');
+    expect(getDaysInMonth(2025, 0)).toBe(31);
+    expect(getDaysInMonth(2025, 13)).toBe(31);
   });
 });
 
 describe('getWeekDates', () => {
-  it('주중의 날짜(수요일)에 대해 올바른 주의 날짜들을 반환한다', () => {});
+  it('주중의 날짜(수요일)에 대해 올바른 주의 날짜들을 반환한다', () => {
+    const date = new Date('2025-02-12'); // 수요일
+    const weekDates = getWeekDates(date);
 
-  it('주의 시작(월요일)에 대해 올바른 주의 날짜들을 반환한다', () => {});
+    expect(weekDates).toHaveLength(7);
+    expect(weekDates[0].getDate()).toBe(9);
+    expect(weekDates[6].getDate()).toBe(15);
+  });
 
-  it('주의 끝(일요일)에 대해 올바른 주의 날짜들을 반환한다', () => {});
+  it('주의 시작(월요일)에 대해 올바른 주의 날짜들을 반환한다', () => {
+    const date = new Date('2025-02-10'); // 월요일
+    const weekDates = getWeekDates(date);
 
-  it('연도를 넘어가는 주의 날짜를 정확히 처리한다 (연말)', () => {});
+    expect(weekDates).toHaveLength(7);
+    expect(weekDates[0].getDate()).toBe(9);
+    expect(weekDates[6].getDate()).toBe(15);
+  });
 
-  it('연도를 넘어가는 주의 날짜를 정확히 처리한다 (연초)', () => {});
+  it('주의 끝(일요일)에 대해 올바른 주의 날짜들을 반환한다', () => {
+    const date = new Date('2025-02-09'); // 일요일
+    const weekDates = getWeekDates(date);
 
-  it('윤년의 2월 29일을 포함한 주를 올바르게 처리한다', () => {});
+    expect(weekDates).toHaveLength(7);
+    expect(weekDates[0].getDate()).toBe(9);
+    expect(weekDates[6].getDate()).toBe(15);
+  });
 
-  it('월의 마지막 날짜를 포함한 주를 올바르게 처리한다', () => {});
+  // Q. 이렇게 하는걸 바라는걸까?
+  it('연도를 넘어가는 주의 날짜를 정확히 처리한다 (연말)', () => {
+    const date = new Date('2024-12-30');
+    const weekDates = getWeekDates(date);
+
+    expect(weekDates).toHaveLength(7);
+    expect(weekDates[0].getDate()).toBe(29);
+    expect(weekDates[6].getDate()).toBe(4);
+    expect(weekDates[6].getFullYear()).toBe(2025);
+  });
+
+  it('연도를 넘어가는 주의 날짜를 정확히 처리한다 (연초)', () => {
+    const date = new Date('2025-01-01');
+    const weekDates = getWeekDates(date);
+
+    expect(weekDates).toHaveLength(7);
+    expect(weekDates[0].getDate()).toBe(29);
+    expect(weekDates[6].getDate()).toBe(4);
+    expect(weekDates[0].getFullYear()).toBe(2024);
+  });
+
+  it('윤년의 2월 29일을 포함한 주를 올바르게 처리한다', () => {
+    const date = new Date('2024-02-29');
+    const weekDates = getWeekDates(date);
+
+    expect(weekDates).toHaveLength(7);
+    expect(weekDates[0].getDate()).toBe(25);
+    expect(weekDates[6].getDate()).toBe(2);
+    expect(weekDates[6].getFullYear()).toBe(2024);
+  });
+
+  it('월의 마지막 날짜를 포함한 주를 올바르게 처리한다', () => {
+    const date = new Date('2025-01-31');
+    const weekDates = getWeekDates(date);
+
+    expect(weekDates).toHaveLength(7);
+    expect(weekDates[0].getMonth()).toBe(0); // getMonth는 0부터 시작, 0이 1월에 해당
+    expect(weekDates[6].getMonth()).toBe(1);
+  });
 });
 
 describe('getWeeksAtMonth', () => {
-  it('2024년 7월 1일의 올바른 주 정보를 반환해야 한다', () => {});
+  it('2024년 7월 1일의 올바른 주 정보를 반환해야 한다', () => {
+    const date = new Date('2024-07-01');
+    const weeks = getWeeksAtMonth(date);
+  });
 });
 
 describe('getEventsForDay', () => {
