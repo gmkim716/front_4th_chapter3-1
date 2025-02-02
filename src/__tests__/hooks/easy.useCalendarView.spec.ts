@@ -102,5 +102,11 @@ it("currentDate가 '2024-01-01' 변경되면 1월 휴일 '신정'으로 업데�
     result.current.setCurrentDate(new Date('2024-01-01'));
   });
 
+  // currentDate 업데이트를 확인한다
   assertDate(result.current.currentDate, new Date('2024-01-01'));
+
+  // holidays 업데이트를 확인한다
+  expect(result.current.holidays).toEqual({
+    '2024-01-01': '신정',
+  });
 });
