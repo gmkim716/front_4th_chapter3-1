@@ -10,6 +10,22 @@ import { useEventOperations } from '../../hooks/useEventOperations.ts';
 import { server } from '../../setupTests.ts';
 import { Event } from '../../types.ts';
 
+const mockEvent: Event = {
+  id: '1',
+  title: '테스트 일정',
+  date: '2024-02-04',
+  startTime: '09:00',
+  endTime: '10:00',
+  description: '테스트 일정 설명',
+  location: '회의실 A',
+  category: '회의',
+  repeat: {
+    type: 'none',
+    interval: 1,
+  },
+  notificationTime: 30, // 30분 전 알림
+};
+
 // ? Medium: 아래 toastFn과 mock과 이 fn은 무엇을 해줄까요?
 const toastFn = vi.fn();
 
