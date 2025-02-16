@@ -324,3 +324,68 @@ it('notificationTime을 10으로 하면 지정 시간 10분 전 알람 텍스트
 
   expect(screen.getByText('10분 후 기존 회의 일정이 시작됩니다.')).toBeInTheDocument();
 });
+
+// 3-2 시작
+describe('반복 유형 선택', () => {
+  it('일정 생성 시 반복 유형을 선택할 수 있다', async () => {
+    // 서버 응답 설정
+    server.use(
+      http.post('/api/events', async ({ request }) => {
+        const eventData = (await request.json()) as Event;
+        return HttpResponse.json({
+          id: '123',
+          title: eventData.title,
+          date: eventData.date,
+          startTime: eventData.startTime,
+          endTime: eventData.endTime,
+          description: eventData.description,
+          location: eventData.location,
+          category: eventData.category,
+          repeat: eventData.repeat,
+          notificationTime: eventData.notificationTime
+        });
+      })
+    );
+
+    const { user } = setup(<App />);
+
+    // 1. 일정 추가 버튼 클릭
+    await user.click(screen.getAllByText('일정 추가')[0]);
+
+    // 2. 기본 정보 입력
+    await user.type(screen.getByLabelText('제목'), '반복 회의');
+    await user.type(screen.getByLabelText('날짜'), '2024-10-15');
+    await user.type(screen.getByLabelText('시작 시간'), '14:00');
+    await user.type(screen.getByLabelText('종료 시간'), '15:00');
+
+    // 3. 반복 설정
+    const repeatCheckbox = screen.getByText('반복 일정');
+    await user.click(repeatCheckbox);
+
+    // 4. 반복 유형이 기본적으로 'none'인지 확인
+    const repeatTypeSelect = screen.getByLabelText('반복 유형');
+    expect(repeatTypeSelect).toHaveValue('none');
+
+    // 5. 반복 유형을 '매년'으로 변경
+    await user.selectOptions(repeatTypeSelect, 'yearly');
+    expect(repeatTypeSelect).toHaveValue('yearly');
+
+    // 6. 반복 간격을 2로 설정
+    const intervalInput = screen.getByLabelText('반복 간격');
+    await user.clear(intervalInput);
+    await user.type(intervalInput, '2');
+
+    // 7. 반복 종료일 설정
+    const endDateInput = screen.getByLabelText('반복 종료일');
+    await user.type(endDateInput, '2024-12-31');
+
+    // 8. 저장
+    await user.click(screen.getByTestId('event-submit-button'));
+
+    // 9. 저장된 일정 확인
+    const eventList = within(screen.getByTestId('event-list'));
+    expect(await eventList.findByText('반복 회의')).toBeInTheDocument();
+    // 정확한 텍스트 형식으로 수정
+    expect(await eventList.findByText('반복: 2년마다 (종료: 2024-12-31)')).toBeInTheDocument();
+  });
+});

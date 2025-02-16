@@ -5,6 +5,54 @@ import { getTimeErrorMessage } from '../utils/timeValidation';
 
 type TimeErrorRecord = Record<'startTimeError' | 'endTimeError', string | null>;
 
+// 새로운 유틸리티 함수 추가
+const adjustDateForRepetition = (date: string, repeatType: RepeatType): string => {
+  const currentDate = new Date(date);
+
+  switch (repeatType) {
+    case 'monthly': {
+      const nextMonth = new Date(currentDate);
+      nextMonth.setMonth(nextMonth.getMonth() + 1);
+
+      // 현재 날짜의 일자
+      const originalDay = currentDate.getDate();
+      // 다음 달의 마지막 날
+      const lastDayOfNextMonth = new Date(
+        nextMonth.getFullYear(),
+        nextMonth.getMonth() + 1,
+        0
+      ).getDate();
+
+      // 만약 현재 일자가 다음 달의 마지막 날보다 크다면 마지막 날로 조정
+      if (originalDay > lastDayOfNextMonth) {
+        nextMonth.setDate(lastDayOfNextMonth);
+      }
+
+      return nextMonth.toISOString().split('T')[0];
+    }
+    case 'yearly': {
+      const nextYear = new Date(currentDate);
+      nextYear.setFullYear(nextYear.getFullYear() + 1);
+
+      // 윤년 처리 (2월 29일인 경우)
+      if (nextYear.getMonth() === 1 && nextYear.getDate() === 29) {
+        if (
+          !(
+            nextYear.getFullYear() % 4 === 0 &&
+            (nextYear.getFullYear() % 100 !== 0 || nextYear.getFullYear() % 400 === 0)
+          )
+        ) {
+          nextYear.setDate(28);
+        }
+      }
+
+      return nextYear.toISOString().split('T')[0];
+    }
+    default:
+      return date;
+  }
+};
+
 export const useEventForm = (initialEvent?: Event) => {
   const [title, setTitle] = useState(initialEvent?.title || '');
   const [date, setDate] = useState(initialEvent?.date || '');
@@ -69,6 +117,15 @@ export const useEventForm = (initialEvent?: Event) => {
     setNotificationTime(event.notificationTime);
   };
 
+  // 반복 유형 변경 시 날짜 조정 로직 추가
+  const handleRepeatTypeChange = (newType: RepeatType) => {
+    setRepeatType(newType);
+    if (date && (newType === 'monthly' || newType === 'yearly')) {
+      const adjustedDate = adjustDateForRepetition(date, newType);
+      setDate(adjustedDate);
+    }
+  };
+
   return {
     title,
     setTitle,
@@ -102,5 +159,8 @@ export const useEventForm = (initialEvent?: Event) => {
     handleEndTimeChange,
     resetForm,
     editEvent,
+
+    handleRepeatTypeChange,
+    adjustDateForRepetition,
   };
 };

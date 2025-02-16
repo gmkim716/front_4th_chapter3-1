@@ -101,6 +101,9 @@ function App() {
     handleEndTimeChange,
     resetForm,
     editEvent,
+
+    handleRepeatTypeChange,
+    adjustDateForRepetition,
   } = useEventForm();
 
   const { events, saveEvent, deleteEvent } = useEventOperations(Boolean(editingEvent), () =>
@@ -298,12 +301,21 @@ function App() {
 
           <FormControl>
             <FormLabel>제목</FormLabel>
-            <Input value={title} onChange={(e) => setTitle(e.target.value)} />
+            <Input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              aria-label="제목"
+            />
           </FormControl>
 
           <FormControl>
             <FormLabel>날짜</FormLabel>
-            <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+            <Input
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              aria-label="날짜"
+            />
           </FormControl>
 
           <HStack width="100%">
@@ -382,8 +394,10 @@ function App() {
                 <FormLabel>반복 유형</FormLabel>
                 <Select
                   value={repeatType}
-                  onChange={(e) => setRepeatType(e.target.value as RepeatType)}
+                  onChange={(e) => handleRepeatTypeChange(e.target.value as RepeatType)}
+                  aria-label="반복 유형"
                 >
+                  <option value="none">반복 안함</option>
                   <option value="daily">매일</option>
                   <option value="weekly">매주</option>
                   <option value="monthly">매월</option>
@@ -398,6 +412,7 @@ function App() {
                     value={repeatInterval}
                     onChange={(e) => setRepeatInterval(Number(e.target.value))}
                     min={1}
+                    aria-label="반복 간격"
                   />
                 </FormControl>
                 <FormControl>
@@ -406,6 +421,7 @@ function App() {
                     type="date"
                     value={repeatEndDate}
                     onChange={(e) => setRepeatEndDate(e.target.value)}
+                    aria-label="반복 종료일"
                   />
                 </FormControl>
               </HStack>
