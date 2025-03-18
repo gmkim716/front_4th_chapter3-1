@@ -4,7 +4,7 @@ import { fetchHolidays } from '../apis/fetchHolidays';
 
 export const useCalendarView = () => {
   const [view, setView] = useState<'week' | 'month'>('month');
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState(new Date('2024-10-01')); // 초기 날짜 고정(테스트를 위함)
   const [holidays, setHolidays] = useState<{ [key: string]: string }>({});
 
   const navigate = (direction: 'prev' | 'next') => {

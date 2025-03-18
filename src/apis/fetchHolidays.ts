@@ -22,6 +22,8 @@ export function fetchHolidays(date: Date) {
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, '0');
   const holidays = Object.keys(HOLIDAY_RECORD) as HolidayKeys[];
+  
+  // 연도와 월을 기준으로 해당하는 휴일의 정보를 가져오기
   return holidays
     .filter((date) => date.includes(`${y}-${m}`))
     .reduce(
