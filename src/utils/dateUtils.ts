@@ -92,6 +92,7 @@ export function isDateInRange(date: Date, rangeStart: Date, rangeEnd: Date): boo
 }
 
 export function fillZero(value: number, size = 2) {
+  // padStart: 주어진 자리수보다 작으면 2번째 인자로 주어진 문자열로 채움
   return String(value).padStart(size, '0');
 }
 

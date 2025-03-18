@@ -12,3 +12,6 @@
   - `const { result } = renderHook(() => useCalendarView())`
   - renderHook의 result는 훅의 반환값을 담는다. result.current를 통해 훅의 현재 상태와 함수에 접근할 수 있다
   - result / rerender / unmount 등의 메서드가 있다 
+
+- expect(...).toBe(..): expect의 결과물로 toBe를 얻었는지 확인
+
